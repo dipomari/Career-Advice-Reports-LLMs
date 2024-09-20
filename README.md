@@ -1,4 +1,4 @@
-```markdown
+
 # Profile Evaluation System
 
 This system processes a set of profiles using OpenAI's API to generate reports on different areas, such as competency frameworks, skill gaps, educational recommendations, career pathways, and action plans.
