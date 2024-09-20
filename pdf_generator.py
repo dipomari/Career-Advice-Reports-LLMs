@@ -2,115 +2,257 @@ import pdfkit
 import tempfile
 import os
 
-def personal_assessment_html(personal_assessment: dict) -> str:
 
-    skills = personal_assessment['personal_assessment']['skills']
-    interests = personal_assessment['personal_assessment']['interests']
-    personality_traits = personal_assessment['personal_assessment']['personality_traits']
-    career_values = personal_assessment['personal_assessment']['career_values']
-    long_term_goals = personal_assessment['personal_assessment']['long_term_goals']
+def competencies_assessment_short_term_goal(profile: dict, competencies_assessment: dict) -> str:
 
-    personal_assessment_html_str = f"""
-    <div style=page-break-inside: avoid;">
-        <h1>Personal Assessment</h1>
-        <h2>Skills</h2>
-        <p>{skills}</p>
-        <h2>Interests</h2>
-        <p>{interests}</p>
-        <h2>Personality Traits</h2>
-        <p>{personality_traits}</p>
-        <h2>Career Values</h2>
-        <p>{career_values}</p>
-        <h2>Long Term Goals</h2>
-        <p>{long_term_goals}</p>
-    </div>
+    key_competencies = competencies_assessment['Competency Framework']['Key Competencies']
+    behavioral_competencies = competencies_assessment['Competency Framework']['Behavioral Competencies']
+    short_term_goal = profile['short_term_goal']
+    # Start constructing the HTML content
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Skill Baseline for: {short_term_goal}</h1>
+        
+        <h2>Key Skills</h2>
+        <div>
     """
-    return personal_assessment_html_str
 
-def career_options_html(career_options: dict) -> str:
+    for competency, details in key_competencies.items():
+        html_str += f"""
+            <h3>{competency}</h3>
+            <p><strong>Description:</strong> {details['Description']}</p>
+            <p><strong>Justification:</strong> {details['Justification']}</p>
+        """
 
-    industry_overview = career_options['career_options']['industry_overview']
-    potential_roles = career_options['career_options']['potential_roles']
-    growth_opportunities = career_options['career_options']['growth_opportunities']
+    html_str += "</div><h2>Key Behavioral Competencies</h2><div>"
+
+    for competency, details in behavioral_competencies.items():
+        html_str += f"""
+            <h3>{competency}</h3>
+            <p><strong>Description:</strong> {details['Description']}</p>
+            <p><strong>Justification:</strong> {details['Justification']}</p>
+        """
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def competencies_assessment_long_term_goal(profile: dict, competencies_assessment: dict) -> str:
+
+    key_competencies = competencies_assessment['Competency Framework']['Key Competencies']
+    behavioral_competencies = competencies_assessment['Competency Framework']['Behavioral Competencies']
+    long_term_goal = profile['long_term_goal']
+    # Start constructing the HTML content
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Skills Baseline for {long_term_goal}</h1>
+        
+        <h2>Key Skills</h2>
+        <div>
+    """
+
+    for competency, details in key_competencies.items():
+        html_str += f"""
+            <h3>{competency}</h3>
+            <p><strong>Description:</strong> {details['Description']}</p>
+            <p><strong>Importance:</strong> {details['Justification']}</p>
+        """
+
+    html_str += "</div><h2>Key Behavioral Competencies</h2><div>"
+
+    for competency, details in behavioral_competencies.items():
+        html_str += f"""
+            <h3>{competency}</h3>
+            <p><strong>Description:</strong> {details['Description']}</p>
+            <p><strong>Importance:</strong> {details['Justification']}</p>
+        """
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def short_term_skill_gap_analysis_html(profile: dict, skill_gap_analysis: dict) -> str:
     
-    career_options_html_str = f"""
-    <div style=page-break-inside: avoid;">
-        <h1>Career Options</h1>
-        <h2>Industry Overview</h2>
-        <p>{industry_overview}</p>
-        <h2>Potential Roles</h2>
-        {potential_roles}
-        <h2>Growth Opportunities</h2>
-        <p>{growth_opportunities}</p>
-    </div>
-    """
-    return career_options_html_str
+    identified_gaps = skill_gap_analysis['SkillGapAnalysis']['IdentifiedGaps']
 
-def educational_requirements_html(educational_requirements: dict) -> str:
-    """Example Dictionary:
-    {'educational_and_training_requirements': {'necessary_education': "A bachelor's degree in Computer Science or related field is necessary for roles such as Software Developer or Data Analyst. A master's degree may be required for positions like Data Scientist or Machine Learning Engineer.", 'training_programs': 'To enhance technical skills, consider enrolling in online courses or bootcamps focusing on programming languages (e.g., Python, R), data analysis tools (e.g., SQL, Tableau), and machine learning techniques. Completion of a coding bootcamp can also be beneficial for roles in software development.', 'continuing_education': 'For continuous learning and career growth, participation in workshops, conferences, and hackathons can help stay updated with the latest industry trends. Pursuing certifications such as AWS Certified Solutions Architect or Google Professional Data Engineer can also add value to your resume and open up advanced career opportunities.'}}
-    """
-    necessary_education = educational_requirements['educational_and_training_requirements']['necessary_education']
-    training_programs = educational_requirements['educational_and_training_requirements']['training_programs']
-    continuing_education = educational_requirements['educational_and_training_requirements']['continuing_education']
+    short_term_goal = profile['short_term_goal']
 
-    educational_requirements_html_str = f"""
-    <div style=page-break-inside: avoid;">
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Skill Gap Analysis between Baseline and Profile's Current Skills</h1>
+        <div>
+    """
+    for gap in identified_gaps:
+        html_str += f"""
+            <h2>{gap['Skill']}</h2>
+            <p><strong>Current Level:</strong> {gap['CurrentLevel']}</p>
+            <p><strong>Required Level:</strong> {gap['RequiredLevel']}</p>
+            <p><strong>Gap Description:</strong> {gap['GapDescription']}</p>
+            <h3>Strategies to Narrow the Gap:</h3>
+            <ul>
+        """
+        for strategy in gap['StrategiesToNarrowGap']:
+            html_str += f"<li>{strategy}</li>"
+
+        html_str += "</ul>"
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def long_term_skill_gap_analysis_html(profile: dict, skill_gap_analysis: dict) -> str:
+        
+    identified_gaps = skill_gap_analysis['SkillGapAnalysis']['IdentifiedGaps']
+
+    long_term_goal = profile['long_term_goal']
+
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Skill Gap Analysis for {long_term_goal}</h1>
+        <div>
+    """
+    for gap in identified_gaps:
+        html_str += f"""
+            <h2>{gap['Skill']}</h2>
+            <p><strong>Current Level:</strong> {gap['CurrentLevel']}</p>
+            <p><strong>Required Level:</strong> {gap['RequiredLevel']}</p>
+            <p><strong>Gap Description:</strong> {gap['GapDescription']}</p>
+            <h3>Strategies to Narrow the Gap:</h3>
+            <ul>
+        """
+        for strategy in gap['StrategiesToNarrowGap']:
+            html_str += f"<li>{strategy}</li>"
+
+        html_str += "</ul>"
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def pathway_to_short_term_goal_html(profile: dict, career_pathway: dict) -> str:
+        
+    milestones = career_pathway['career_pathway']['key_milestones']
+    current_occupation = profile['current_occupation']
+    short_term_goal = profile['short_term_goal']
+
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Career Pathway</h1>
+        <h2>From {current_occupation} to {short_term_goal}</h2>
+
+        <h2>Key Milestones</h2>
+        <div>
+    """
+
+    for milestone in milestones:
+        html_str += f"""
+            <h3>{milestone['milestone']}</h3>
+            <h4>Actions:</h4>
+            <ul>
+        """
+        for action in milestone['actions']:
+            html_str += f"<li>{action}</li>"
+        html_str += "</ul>"
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def pathway_to_long_term_goal_html(profile: dict, career_pathway: dict) -> str:
+
+    milestones = career_pathway['career_pathway']['key_milestones']
+
+    long_term_goal = profile['long_term_goal']
+
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Career Pathway for {long_term_goal}</h1>
+
+        <h2>Key Milestones</h2>
+        <div>
+    """
+
+    for milestone in milestones:
+        html_str += f"""
+            <h3>{milestone['milestone']}</h3>
+            <h4>Actions:</h4>
+            <ul>
+        """
+        for action in milestone['actions']:
+            html_str += f"<li>{action}</li>"
+        html_str += "</ul>"
+
+    html_str += "</div></div>"
+
+    return html_str 
+
+def short_term_educational_requirements_html(profile: dict, educational_requirements: dict) -> str:
     
-        <h1>Educational Requirements</h1>
-        <h2>Necessary Education</h2>
-        <p>{necessary_education}</p>
-        <h2>Training Programs</h2>
-        <p>{training_programs}</p>
-        <h2>Continuing Education</h2>
-        <p>{continuing_education}</p>
-    </div>
-    """
-    return educational_requirements_html_str
+    educational_content = educational_requirements['SkillGapRecommendations']['EducationalContent']
 
-def market_analysis_html(market_analysis: dict) -> str:
-    job_market_trends = market_analysis['market_analysis']['job_market_trends']
-    geographical_factors = market_analysis['market_analysis']['geographical_factors']
-    salary_expectations = market_analysis['market_analysis']['salary_expectations']
+    short_term_goal = profile['short_term_goal']
+
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Educational Content Recommendations for Filling the Gaps</h1>
+        <div>
+    """
+    for skill in educational_content:
+        html_str += f"<h2>{skill['Skill']}</h2>"
+        
+        for recommendation in skill['Recommendations']:
+            html_str += f"""
+                <h3>{recommendation['Type']}: {recommendation['Title']}</h3>
+                <p><strong>Provider:</strong> {recommendation['Provider']}</p>
+                <p><strong>Description:</strong> {recommendation['Description']}</p>
+                <p><strong>Link:</strong> <a href="{recommendation['Link']}">{recommendation['Link']}</a></p>
+            """
+
+    html_str += "</div></div>"
+
+    return html_str
+
+def long_term_educational_requirements_html(profile: dict, educational_requirements: dict) -> str:
     
-    market_analysis_html_str = f"""
-    <div style=page-break-inside: avoid;">
-        <h1>Market Analysis</h1>
-        <h2>Job Market Trends</h2>
-        <p>{job_market_trends}</p>
-        <h2>Geographical Factors</h2>
-        <p>{geographical_factors}</p>
-        <h2>Salary Expectations</h2>
-        <p>{salary_expectations}</p>
-    </div>
+    educational_content = educational_requirements['SkillGapRecommendations']['EducationalContent']
+
+    long_term_goal = profile['long_term_goal']
+
+    html_str = f"""
+    <div style="page-break-inside: avoid;">
+        <h1>Skill Gap Recommendations for {long_term_goal}</h1>
+        <div>
     """
-    return market_analysis_html_str
+    for skill in educational_content:
+        html_str += f"<h2>{skill['Skill']}</h2>"
+        
+        for recommendation in skill['Recommendations']:
+            html_str += f"""
+                <h3>{recommendation['Type']}: {recommendation['Title']}</h3>
+                <p><strong>Provider:</strong> {recommendation['Provider']}</p>
+                <p><strong>Description:</strong> {recommendation['Description']}</p>
+                <p><strong>Link:</strong> <a href="{recommendation['Link']}">{recommendation['Link']}</a></p>
+            """
 
-def action_plan_html(action_plan: dict) -> str:
-    short_term_goals = action_plan['action_plan']['short_term_goals']
-    long_term_strategy = action_plan['action_plan']['long_term_strategy']
-    networking_strategies = action_plan['action_plan']['networking_strategies']
+    html_str += "</div></div>"
 
-    action_plan_html_str = f"""
-    <div style=page-break-inside: avoid;">
-        <h1>Action Plan</h1>
-        <h2>Short Term Goals</h2>
-        <p>{short_term_goals}</p>
-        <h2>Long Term Strategy</h2>
-        <p>{long_term_strategy}</p>
-        <h2>Networking Strategies</h2>
-        <p>{networking_strategies}</p>
-    </div>
-    """
-    return action_plan_html_str
+    return html_str
 
 
-def generate_pdf(personality_json: dict, career_json: dict, educational_json: dict, market_json: dict, action_json: dict, file_name: str = "Career_Exploration_Report.pdf") -> str:
-    personal_assessment_html_str = personal_assessment_html(personality_json)
-    career_options_html_str = career_options_html(career_json)
-    educational_requirements_html_str = educational_requirements_html(educational_json)
-    market_analysis_html_str = market_analysis_html(market_json)
-    action_plan_html_str = action_plan_html(action_json)
+def generate_pdf(profile:dict, short_term_skills_json: dict, long_term_skills_json: dict,
+                short_term_skill_gap_json: dict, long_term_skill_gap_json: dict,
+                pathway_to_short_term_goal_json: dict, pathway_to_long_term_goal_json: dict,
+                educational_suggestions_for_short_term_json: dict, educational_suggestions_for_long_term_json: dict,
+                file_name: str = "Career_Exploration_Report.pdf") -> str:
+    
+    short_term_skills_html_str = competencies_assessment_short_term_goal(profile, short_term_skills_json)
+    long_term_skills_html_str = competencies_assessment_long_term_goal(profile, long_term_skills_json)
+    short_term_skill_gap_html_str = short_term_skill_gap_analysis_html(profile, short_term_skill_gap_json)
+    long_term_skill_gap_html_str = long_term_skill_gap_analysis_html(profile, long_term_skill_gap_json)
+    pathway_to_short_term_goal_html_str = pathway_to_short_term_goal_html(profile, pathway_to_short_term_goal_json)
+    pathway_to_long_term_goal_html_str = pathway_to_long_term_goal_html(profile, pathway_to_long_term_goal_json)
+    educational_suggestions_for_short_term_html_str = short_term_educational_requirements_html(profile, educational_suggestions_for_short_term_json)
+    educational_suggestions_for_long_term_html_str = long_term_educational_requirements_html(profile, educational_suggestions_for_long_term_json)
 
     html_content = f"""
     <!DOCTYPE html>
@@ -118,20 +260,168 @@ def generate_pdf(personality_json: dict, career_json: dict, educational_json: di
     <head>
         <style>
             @page {{ size: A4; }}
-            body {{ margin: 0; padding: 0; font-family: Arial, sans-serif; font-size: 10.5pt; color: #737373; }}
-            h1, h2, h3, strong {{ color: #737373; }}
-            h1 {{ font-size: 12.5pt; font-weight: bold; margin-bottom: 20px; }}
-            h2, h3 {{ font-size: 11.5pt; font-weight: bold; margin-bottom: 10px; }}
-            .avoid-break {{ page-break-after: always; }}
+            body {{
+                margin: 0;
+                padding: 0;
+                font-family: 'Arial', sans-serif;
+                font-size: 12pt; /* Increased base font size for better readability */
+                color: #333333; /* Darker color for better contrast */
+            }}
+            h1 {{
+                font-size: 20pt; /* Significantly larger to stand out as the main title */
+                font-weight: bold;
+                color: #0056b3; /* Added a distinct color for primary headers */
+                margin-bottom: 24px; /* More space below the header */
+                padding-bottom: 6px; /* Added padding for visual space */
+                border-bottom: 2px solid #0056b3; /* Underline effect for emphasis */
+            }}
+            h2 {{
+                font-size: 16pt; /* Larger than h3 but smaller than h1 */
+                font-weight: bold;
+                color: #006600; /* Different color to distinguish from h1 */
+                margin-top: 20px; /* Space above h2 for separation */
+                margin-bottom: 12px; /* Increased space below the header */
+            }}
+            h3 {{
+                font-size: 14pt; /* Smaller than h2, yet distinguishable from body text */
+                font-weight: bold;
+                color: #cc5200; /* Unique color for tertiary headers */
+                margin-bottom: 8px; /* Smaller margin to keep sections compact */
+            }}
+            strong {{
+                color: #737373; /* Keeping the strong tag subtle */
+                font-weight: bold; /* Ensure it's bolded */
+            }}
+            a {{
+                color: #0056b3; /* Link color matches h1 for consistency */
+                text-decoration: none; /* Optional: removes underline from links */
+            }}
+            a:hover {{
+                text-decoration: underline; /* Underline on hover for better interaction */
+            }}
+            .avoid-break {{
+                page-break-after: always;
+            }}
         </style>
         <title>Career Exploration Report</title>
     </head>
     <body>
-        {personal_assessment_html_str}
-        {career_options_html_str}
-        {educational_requirements_html_str}
-        {market_analysis_html_str}
-        {action_plan_html_str}
+        {short_term_skills_html_str}
+        {long_term_skills_html_str}
+        {short_term_skill_gap_html_str}
+        {long_term_skill_gap_html_str}
+        {pathway_to_short_term_goal_html_str}
+        {pathway_to_long_term_goal_html_str}
+        {educational_suggestions_for_short_term_html_str}
+        {educational_suggestions_for_long_term_html_str}
+    </body>
+    </html>
+    """
+    options = {
+        "page-size": "A4",
+        "margin-top": "1.400in",
+        "margin-right": "0.75in",
+        "margin-bottom": "1.200in",
+        "margin-left": "0.45in",
+        "encoding": "UTF-8",
+        "no-outline": None,
+        "dpi": 300,
+    }
+
+    # Determine the path to the user's Downloads folder
+    home = os.path.expanduser("~")
+    downloads_path = os.path.join(home, "Downloads", file_name)
+
+    # Use pdfkit to create the PDF directly at the specified location
+    pdfkit.from_string(html_content, downloads_path, options=options)
+
+    return downloads_path
+
+def generate_short_pdf(profile:dict, short_term_skills_json: dict, 
+                short_term_skill_gap_json: dict,
+                pathway_to_short_term_goal_json: dict, 
+                educational_suggestions_for_short_term_json: dict,
+                file_name: str = "Career_Exploration_Report.pdf") -> str:
+    
+    short_term_skills_html_str = competencies_assessment_short_term_goal(profile, short_term_skills_json)
+
+    short_term_skill_gap_html_str = short_term_skill_gap_analysis_html(profile, short_term_skill_gap_json)
+
+    pathway_to_short_term_goal_html_str = pathway_to_short_term_goal_html(profile, pathway_to_short_term_goal_json)
+
+    educational_suggestions_for_short_term_html_str = short_term_educational_requirements_html(profile, educational_suggestions_for_short_term_json)
+
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            @page {{ size: A4; }}
+            body {{
+                margin: 0;
+                padding: 0;
+                font-family: 'Arial', sans-serif;
+                font-size: 12pt; /* Increased base font size for better readability */
+                color: #333333; /* Darker color for better contrast */
+            }}
+            h1 {{
+                font-size: 20pt; /* Significantly larger to stand out as the main title */
+                font-weight: bold;
+                color: #0056b3; /* Added a distinct color for primary headers */
+                margin-bottom: 24px; /* More space below the header */
+                padding-bottom: 6px; /* Added padding for visual space */
+                border-bottom: 2px solid #0056b3; /* Underline effect for emphasis */
+            }}
+            h2 {{
+                font-size: 16pt; /* Larger than h3 but smaller than h1 */
+                font-weight: bold;
+                color: #006600; /* Different color to distinguish from h1 */
+                margin-top: 20px; /* Space above h2 for separation */
+                margin-bottom: 12px; /* Increased space below the header */
+            }}
+            h3 {{
+                font-size: 14pt; /* Smaller than h2, yet distinguishable from body text */
+                font-weight: bold;
+                color: #cc5200; /* Unique color for tertiary headers */
+                margin-bottom: 8px; /* Smaller margin to keep sections compact */
+            }}
+            strong {{
+                color: #737373; /* Keeping the strong tag subtle */
+                font-weight: bold; /* Ensure it's bolded */
+            }}
+            a {{
+                color: #0056b3; /* Link color matches h1 for consistency */
+                text-decoration: none; /* Optional: removes underline from links */
+            }}
+            a:hover {{
+                text-decoration: underline; /* Underline on hover for better interaction */
+            }}
+            .avoid-break {{
+                page-break-after: always;
+            }}
+
+        </style>
+        <h1>From {profile["current_occupation"]} to {profile["short_term_goal"]}</h1>
+        <h2>Profile Information</h2>
+        <ul>
+            <li><strong>Education:</strong> {profile['education']}</li>
+            <li><strong>Current Occupation:</strong> {profile['current_occupation']}</li>
+            <li><strong>Years of Experience:</strong> {profile['years_of_experience']}</li>
+            <li><strong>Industry:</strong> {profile['industry']}</li>
+            <li><strong>Goal:</strong> {profile['short_term_goal']}</li>
+            <li><strong>Current Skills:</strong> {', '.join(profile['current_skills'])}</li>
+        </ul>
+    </head>
+    <body>
+        {short_term_skills_html_str}
+
+        {short_term_skill_gap_html_str}
+
+        {pathway_to_short_term_goal_html_str}
+
+        {educational_suggestions_for_short_term_html_str}
+
     </body>
     </html>
     """

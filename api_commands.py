@@ -16,11 +16,12 @@ def create_thread() -> str:
     return thread_id
 
 def send_message(thread_id:str ,content:str) -> None:
-    client.beta.threads.messages.create(
+    message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
         content=content
         )
+    return message
 
 def wait_for_completion(thread_id, assistant_id) -> None:
     run = client.beta.threads.runs.create_and_poll(thread_id=thread_id, assistant_id=assistant_id)
