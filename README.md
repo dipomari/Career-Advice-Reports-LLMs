@@ -42,8 +42,10 @@ This system processes a set of profiles using OpenAI's API to generate reports o
    In the `pipeline.py` script, the system processes the profiles stored in a dictionary. If you wish to adjust the number of profiles being processed, you can modify the loop that iterates through the profiles. For example:
 
    ```python
-   for profile in profiles[:5]:  # Modify this to use more or fewer profiles
-       # Process each profile
+
+   peding_profiles = [profile_1,profile_2,profile_3,]
+   
+   for profile in peding_profiles:
    ```
 
    You can customize the number of profiles according to your needs by adjusting the slice or loop conditions.
